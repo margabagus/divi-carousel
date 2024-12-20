@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Carousel Example</title>
+    <!-- CSS from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/margabagus/divi-carousel@v1.0.0/dist/css/carousel-service.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        /* Custom theme variables */
+        :root {
+            --carousel-primary-color: #2563eb;
+            --carousel-accent-color: #f97316;
+            --carousel-text-color: #1f2937;
+        }
+
+        /* Custom slide styles */
+        .custom-theme .slide-content {
+            background: linear-gradient(135deg, #f3f4f6 0%, #ffffff 100%);
+        }
+
+        .custom-theme .hover-content {
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+        }
+
+        /* Custom animation */
+        .carousel-slide {
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-slide:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Advanced Carousel Implementation -->
+    <div class="carousel-container">
+        <div class="carousel-wrapper">
+            <div class="carousel">
+                <!-- Slide 1: Custom Theme -->
+                <div class="carousel-slide custom-theme">
+                    <div class="slide-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="slide-icon" viewBox="0 0 16 16">
+                            <!-- SVG path here -->
+                        </svg>
+                        <h3 class="slide-title">Advanced Feature</h3>
+                        <p class="slide-description">Custom-themed slide with advanced features.</p>
+                        <button class="expand-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 4V16M4 10H16" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="hover-content">
+                        <h3 class="hover-title">Advanced Implementation</h3>
+                        <p class="hover-description">This example showcases custom themes, animations, and advanced features.</p>
+                        <a href="https://api.whatsapp.com/send?phone=6282147979921" class="discuss-link">Contact Us</a>
+                        <button class="close-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M4 4L16 16M4 16L16 4" stroke="black" stroke-width="2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Video Background -->
+                <div class="carousel-slide video-theme">
+                    <!-- Video background implementation -->
+                    <div class="slide-content">
+                        <!-- Content similar to Slide 1 -->
+                    </div>
+                </div>
+
+                <!-- Slide 3: Interactive Elements -->
+                <div class="carousel-slide interactive-theme">
+                    <!-- Interactive elements -->
+                    <div class="slide-content">
+                        <!-- Content similar to Slide 1 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enhanced Navigation -->
+        <div class="carousel-navigation">
+            <button class="nav-button prev" aria-label="Previous slide">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M15 10L7.5 10L10.5 7M7.5 10L10.5 13" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </button>
+            <button class="nav-button next" aria-label="Next slide">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 10L12.5 10L9.5 7M12.5 10L9.5 13" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript from CDN -->
+    <script src="https://cdn.jsdelivr.net/gh/margabagus/divi-carousel@v1.0.0/dist/js/carousel-service.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Custom initialization options
+            const options = {
+                autoplay: true,
+                autoplaySpeed: 5000,
+                pauseOnHover: true
+            };
+
+            // Custom event handlers
+            document.querySelectorAll('.carousel-slide').forEach(slide => {
+                slide.addEventListener('mouseenter', function() {
+                    // Custom hover effects
+                });
+
+                slide.addEventListener('click', function() {
+                    // Custom click handling
+                });
+            });
+        });
+    </script>
+</body>
+</html>

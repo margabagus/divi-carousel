@@ -1,0 +1,26 @@
+{
+    "name": "carousel-wordpress",
+    "version": "1.0.0",
+    "description": "Responsive carousel component for WordPress with Divi Theme",
+    "main": "dist/js/carousel-service.min.js",
+    "scripts": {
+      "build:css": "postcss src/css/carousel-service.css -o dist/css/carousel-service.min.css",
+      "build:js": "terser src/js/carousel-service.js -o dist/js/carousel-service.min.js",
+      "build": "npm run build:css && npm run build:js",
+      "watch": "npm run build -- --watch"
+    },
+    "keywords": [
+      "wordpress",
+      "divi",
+      "carousel",
+      "slider"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "devDependencies": {
+      "autoprefixer": "^10.4.0",
+      "postcss": "^8.4.0",
+      "postcss-cli": "^8.3.0",
+      "terser": "^5.14.0"
+    }
+  }
