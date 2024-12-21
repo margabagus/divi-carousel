@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // Check if carousel exists first
   const carousel = document.querySelector('.carousel');
+  if (!carousel) return; // Exit if carousel doesn't exist
+
   const slides = Array.from(document.querySelectorAll('.carousel-slide'));
+  // Exit if no slides found
+  if (!slides.length) return;
+
   const nextButton = document.querySelector('.nav-button.next');
   const prevButton = document.querySelector('.nav-button.prev');
   const expandButtons = document.querySelectorAll('.expand-btn');
@@ -34,15 +40,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Navigation
-  nextButton.addEventListener('click', () => {
-    currentIndex = Math.min(currentIndex + 1, slides.length - slidesToShow);
-    updateSlidePosition();
-  });
+  if (nextButton) {
+    nextButton.addEventListener('click', () => {
+      currentIndex = Math.min(currentIndex + 1, slides.length - slidesToShow);
+      updateSlidePosition();
+    });
+  }
 
-  prevButton.addEventListener('click', () => {
-    currentIndex = Math.max(currentIndex - 1, 0);
-    updateSlidePosition();
-  });
+  if (prevButton) {
+    prevButton.addEventListener('click', () => {
+      currentIndex = Math.max(currentIndex - 1, 0);
+      updateSlidePosition();
+    });
+  }
 
   // Expand/Close handlers
   expandButtons.forEach((button) => {
@@ -85,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function drag(e) {
     if (!isDragging) return;
     
-    // Hanya mencegah default untuk mouse events atau ketika benar-benar diperlukan
     if (e.type.includes('mouse')) {
       e.preventDefault();
     } else if (e.cancelable) {
