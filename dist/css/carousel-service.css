@@ -96,21 +96,23 @@
   background: rgba(0, 0, 0, 1);
   border-radius: 15px;
   padding: 25px;
-  display: none;
-  color: white;
+  display: flex;
+  flex-direction: column;
 }
 
 .hover-title {
   color: white;
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .hover-description {
+  color: white;
   font-size: 16px;
   font-weight: 400;
-  margin-bottom: 60px;
+  line-height: 1.4em;
+  flex-grow: 1;
 }
 
 .discuss-link {
@@ -118,6 +120,7 @@
   text-decoration: none;
   font-size: 16px;
   font-weight: 400;
+  margin-top: auto;
 }
 
 /* Updated Navigation Styles - Apple-like design */
