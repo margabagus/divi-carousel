@@ -5,6 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
   const prevButton = document.querySelector('.nav-button.prev');
   const expandButtons = document.querySelectorAll('.expand-btn');
   const closeButtons = document.querySelectorAll('.close-btn');
+
+  // Hide all hover content initially
+  const allHoverContent = document.querySelectorAll('.hover-content');
+  allHoverContent.forEach(content => {
+    content.style.display = 'none';
+  });
   
   let currentIndex = 0;
   let slideWidth = slides[0].getBoundingClientRect().width;
@@ -67,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
   carousel.addEventListener('mouseup', dragEnd, { passive: true });
   carousel.addEventListener('touchend', dragEnd, { passive: true });
   carousel.addEventListener('mousemove', drag, { passive: false });
-  carousel.addEventListener('touchmove', drag, { passive: false }); // Tidak bisa passive karena menggunakan preventDefault
+  carousel.addEventListener('touchmove', drag, { passive: false }); 
   carousel.addEventListener('mouseleave', dragEnd, { passive: true });
 
   function dragStart(e) {
@@ -112,5 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Responsive handling dengan passive event listener
   window.addEventListener('resize', updateSlidesToShow, { passive: true });
+  
+  // Initialize carousel
   updateSlidesToShow();
 });
