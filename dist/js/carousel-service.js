@@ -21,36 +21,64 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentIndex = 0;
   let slideWidth = slides[0].getBoundingClientRect().width;
   let slidesToShow = 3;
+  let isMobile = false;
 
   // Responsive slidesToShow
   function updateSlidesToShow() {
     if (window.innerWidth <= 480) {
-      slidesToShow = 1.5;
+      slidesToShow = 1.5; // Keep the 1.5 slides view for visual effect
+      isMobile = true;
     } else if (window.innerWidth <= 1024) {
       slidesToShow = 2;
+      isMobile = false;
     } else {
       slidesToShow = 3;
+      isMobile = false;
     }
     slideWidth = slides[0].getBoundingClientRect().width;
     updateSlidePosition();
+    updateButtonState();
   }
 
   function updateSlidePosition() {
-    carousel.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+    // Special handling for the last slide
+    if (isMobile && currentIndex >= slides.length - 1) {
+      // For the last slide, adjust position to show it fully
+      const offset = slides.length - slidesToShow;
+      carousel.style.transform = `translateX(-${offset * slideWidth}px)`;
+    } else {
+      carousel.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+    }
+  }
+
+  function updateButtonState() {
+    if (prevButton) {
+      prevButton.disabled = currentIndex <= 0;
+    }
+    
+    if (nextButton) {
+      nextButton.disabled = currentIndex >= slides.length - 1;
+    }
   }
 
   // Navigation
   if (nextButton) {
     nextButton.addEventListener('click', () => {
-      currentIndex = Math.min(currentIndex + 1, slides.length - slidesToShow);
-      updateSlidePosition();
+      if (currentIndex < slides.length - 1) {
+        currentIndex++;
+        updateSlidePosition();
+        updateButtonState();
+      }
     });
   }
 
   if (prevButton) {
     prevButton.addEventListener('click', () => {
-      currentIndex = Math.max(currentIndex - 1, 0);
-      updateSlidePosition();
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateSlidePosition();
+        updateButtonState();
+      }
     });
   }
 
@@ -71,13 +99,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Touch/Drag functionality dengan passive event listeners
+  // Touch/Drag functionality
   let isDragging = false;
   let startPos = 0;
   let currentTranslate = 0;
   let prevTranslate = 0;
 
-  // Menambahkan passive event listeners untuk touch events
   carousel.addEventListener('mousedown', dragStart, { passive: false });
   carousel.addEventListener('touchstart', dragStart, { passive: true });
   carousel.addEventListener('mouseup', dragEnd, { passive: true });
@@ -111,21 +138,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const movedBy = currentTranslate - prevTranslate;
     
     if (Math.abs(movedBy) > slideWidth / 3) {
-      if (movedBy < 0) {
-        currentIndex = Math.min(currentIndex + 1, slides.length - slidesToShow);
-      } else {
-        currentIndex = Math.max(currentIndex - 1, 0);
+      if (movedBy < 0 && currentIndex < slides.length - 1) {
+        // Moving forward
+        currentIndex++;
+      } else if (movedBy > 0 && currentIndex > 0) {
+        // Moving backward
+        currentIndex--;
       }
     }
     
     updateSlidePosition();
+    updateButtonState();
   }
 
   function getPositionX(e) {
     return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
   }
 
-  // Responsive handling dengan passive event listener
+  // Responsive handling
   window.addEventListener('resize', updateSlidesToShow, { passive: true });
   
   // Initialize carousel
