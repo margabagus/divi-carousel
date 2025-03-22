@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const prevButton = document.querySelector('.nav-button.prev');
   const expandButtons = document.querySelectorAll('.expand-btn');
   const closeButtons = document.querySelectorAll('.close-btn');
+  const carouselWrapper = document.querySelector('.carousel-wrapper');
 
   // Hide all hover content initially
   const allHoverContent = document.querySelectorAll('.hover-content');
@@ -21,64 +22,78 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentIndex = 0;
   let slideWidth = slides[0].getBoundingClientRect().width;
   let slidesToShow = 3;
-  let isMobile = false;
+  let gap = 20; // Default gap between slides
+  
+  // Calculate total slides that can be fully shown
+  function calculateMaxIndex() {
+    // For the last slide, we need to make sure it's fully visible
+    return Math.max(0, slides.length - Math.floor(slidesToShow));
+  }
 
   // Responsive slidesToShow
   function updateSlidesToShow() {
     if (window.innerWidth <= 480) {
-      slidesToShow = 1.5; // Keep the 1.5 slides view for visual effect
-      isMobile = true;
+      slidesToShow = 1.5; // Show 1.5 slides on mobile
+      gap = 15; // Smaller gap on mobile
     } else if (window.innerWidth <= 1024) {
       slidesToShow = 2;
-      isMobile = false;
+      gap = 15;
     } else {
       slidesToShow = 3;
-      isMobile = false;
+      gap = 20;
     }
+    
     slideWidth = slides[0].getBoundingClientRect().width;
+    
+    // Ensure current index is valid with new slidesToShow
+    const maxIndex = calculateMaxIndex();
+    if (currentIndex > maxIndex) {
+      currentIndex = maxIndex;
+    }
+    
     updateSlidePosition();
-    updateButtonState();
+    updateButtonVisibility();
   }
 
   function updateSlidePosition() {
-    // Special handling for the last slide
-    if (isMobile && currentIndex >= slides.length - 1) {
-      // For the last slide, adjust position to show it fully
+    // Special handling for last slide(s)
+    if (currentIndex >= slides.length - Math.floor(slidesToShow)) {
+      // Position to show the last slide completely
       const offset = slides.length - slidesToShow;
-      carousel.style.transform = `translateX(-${offset * slideWidth}px)`;
+      carousel.style.transform = `translateX(-${offset * (slideWidth + gap)}px)`;
     } else {
-      carousel.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+      carousel.style.transform = `translateX(-${currentIndex * (slideWidth + gap)}px)`;
     }
   }
 
-  function updateButtonState() {
+  function updateButtonVisibility() {
     if (prevButton) {
       prevButton.disabled = currentIndex <= 0;
+      prevButton.style.opacity = currentIndex <= 0 ? "0.5" : "1";
     }
     
     if (nextButton) {
-      nextButton.disabled = currentIndex >= slides.length - 1;
+      const maxIndex = calculateMaxIndex();
+      nextButton.disabled = currentIndex >= maxIndex;
+      nextButton.style.opacity = currentIndex >= maxIndex ? "0.5" : "1";
     }
   }
 
   // Navigation
   if (nextButton) {
     nextButton.addEventListener('click', () => {
-      if (currentIndex < slides.length - 1) {
-        currentIndex++;
-        updateSlidePosition();
-        updateButtonState();
-      }
+      const maxIndex = calculateMaxIndex();
+      currentIndex = Math.min(currentIndex + 1, maxIndex);
+      updateSlidePosition();
+      updateButtonVisibility();
     });
   }
 
   if (prevButton) {
     prevButton.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateSlidePosition();
-        updateButtonState();
-      }
+      currentIndex = Math.max(currentIndex - 1, 0);
+      updateSlidePosition();
+      updateButtonVisibility();
     });
   }
 
@@ -107,55 +122,80 @@ document.addEventListener('DOMContentLoaded', function() {
 
   carousel.addEventListener('mousedown', dragStart, { passive: false });
   carousel.addEventListener('touchstart', dragStart, { passive: true });
-  carousel.addEventListener('mouseup', dragEnd, { passive: true });
-  carousel.addEventListener('touchend', dragEnd, { passive: true });
-  carousel.addEventListener('mousemove', drag, { passive: false });
-  carousel.addEventListener('touchmove', drag, { passive: false }); 
-  carousel.addEventListener('mouseleave', dragEnd, { passive: true });
+  window.addEventListener('mouseup', dragEnd, { passive: true });
+  window.addEventListener('touchend', dragEnd, { passive: true });
+  window.addEventListener('mousemove', drag, { passive: false });
+  window.addEventListener('touchmove', drag, { passive: false }); 
+  window.addEventListener('mouseleave', dragEnd, { passive: true });
 
   function dragStart(e) {
+    if (e.type === 'mousedown') {
+      e.preventDefault();
+    }
     isDragging = true;
     startPos = getPositionX(e);
-    prevTranslate = currentTranslate;
+    
+    // Get current transform value
+    const transform = window.getComputedStyle(carousel).getPropertyValue('transform');
+    if (transform !== 'none') {
+      // Extract the translateX value
+      const matrix = new DOMMatrix(transform);
+      prevTranslate = matrix.m41; // Get the X translation
+    } else {
+      prevTranslate = 0;
+    }
+    
+    currentTranslate = prevTranslate;
   }
 
   function drag(e) {
     if (!isDragging) return;
     
-    if (e.type.includes('mouse')) {
-      e.preventDefault();
-    } else if (e.cancelable) {
-      e.preventDefault();
-    }
+    e.preventDefault();
     
     const currentPosition = getPositionX(e);
-    currentTranslate = prevTranslate + currentPosition - startPos;
+    const diff = currentPosition - startPos;
+    currentTranslate = prevTranslate + diff;
+    
+    // Apply transform
     carousel.style.transform = `translateX(${currentTranslate}px)`;
   }
 
   function dragEnd() {
+    if (!isDragging) return;
     isDragging = false;
+    
     const movedBy = currentTranslate - prevTranslate;
     
     if (Math.abs(movedBy) > slideWidth / 3) {
-      if (movedBy < 0 && currentIndex < slides.length - 1) {
-        // Moving forward
-        currentIndex++;
-      } else if (movedBy > 0 && currentIndex > 0) {
-        // Moving backward
-        currentIndex--;
+      if (movedBy < 0) {
+        // Moving to next slide
+        const maxIndex = calculateMaxIndex();
+        currentIndex = Math.min(currentIndex + 1, maxIndex);
+      } else {
+        // Moving to previous slide
+        currentIndex = Math.max(currentIndex - 1, 0);
       }
     }
     
     updateSlidePosition();
-    updateButtonState();
+    updateButtonVisibility();
   }
 
   function getPositionX(e) {
-    return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+    return e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
   }
 
-  // Responsive handling
+  // Add a resize observer for more reliable size updates
+  const resizeObserver = new ResizeObserver(() => {
+    updateSlidesToShow();
+  });
+  
+  if (carouselWrapper) {
+    resizeObserver.observe(carouselWrapper);
+  }
+
+  // Also keep the window resize handler
   window.addEventListener('resize', updateSlidesToShow, { passive: true });
   
   // Initialize carousel
